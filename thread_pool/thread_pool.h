@@ -1,13 +1,6 @@
 #ifndef EASY_FIXED_THREAD_POOL_H
 #define EASY_FIXED_THREAD_POOL_H
 
-/*
-作者：Graphene
-链接：https://www.zhihu.com/question/27908489/answer/355105668
-来源：知乎
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
-*/
-
 #include <mutex>
 #include <condition_variable>
 #include <functional>
