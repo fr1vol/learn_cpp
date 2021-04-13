@@ -3,8 +3,9 @@
 #include <cassert>
 #include <string>
 #include <stack>
-#include <iostream>
+//#include <iostream>
 #include <queue>
+#include <limits.h>
 namespace ez
 {
     
@@ -223,5 +224,73 @@ namespace ez
         }
         return ans;
     }
+
+
+    static int  sizeTable[10] = { -9, -99, -999, -9999, -99999, -999999, -9999999,
+                                      -99999999, -999999999, INT_MIN };
+
+    
+    int get_digits(int x){
+        if(x > 0) x =  -x; 
+        for (int i=0; ; i++){
+            if (x >= sizeTable[i])
+                return i+1;
+        }
+    }
+
+    
+    int left(int index){
+        assert(index >= 0);
+        return index*2+1;
+    }
+    int right(int index){
+        assert(index >= 0);
+        return index*2+2;
+    }
+    int parent(int index){
+        assert(index > 0);
+        return (index-1)/2;
+    }
+    void max_heapify(std::vector<int>& v,int index){
+        int l = left(index);
+        int r = right(index);
+
+        int largest = index;
+        if(l < v.size() && v[l] > v[index]){
+            largest = l;
+        }
+
+        if(r < v.size() && v[r] > v[largest]){
+            largest = r;
+        }
+
+        if(largest != index){
+            std::swap(v[largest],v[index]);
+            max_heapify(v,largest);
+        }
+
+    }
+
+    void build_heap(std::vector<int>& v){
+        if(v.empty())  return;
+
+        int last = v.size()-1;
+        int p = (last == 0)? 0 : parent(last);
+        for(int i = p; i >= 0;--i ){
+            max_heapify(v,i);
+        }
+    }
+
+    std::vector<int> heap_sort(std::vector<int>& v){
+        std::vector<int> ans;
+        while(!v.empty()){
+            ans.push_back(v.front());
+            std::swap(v.front(), v.back());
+            v.pop_back();
+            max_heapify(v,0);
+        }
+        return ans;
+    }
+
 
 }//namespace ez

@@ -7,9 +7,19 @@
 #include <iterator>
 namespace ez{
 
-    
+    // ------------------------ helper -------------------------
+    int get_digits(int val);
     //-------------------------- sort --------------------------
     void quick_sort(std::vector<int>& v,int start, int end);
+    
+    //-------------------------- heap --------------------------
+    int left(int index); 
+    int right(int index);
+    int parent(int index);
+    void max_heapify(std::vector<int>& v,int index);
+    void build_heap(std::vector<int>& v);
+    std::vector<int> heap_sort(std::vector<int>& v);
+
 
     //-------------------------- string ------------------------
     std::size_t strlen(const char* str);

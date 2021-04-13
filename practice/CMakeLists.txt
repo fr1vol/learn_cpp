@@ -6,7 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCES 
         src/practice.cpp
+        src/heap.cpp
         src/main.cpp
+        test/test_practice.cpp
+        test/test_heap.cpp
+
 )
 
 add_executable(test_practice ${SOURCES})
@@ -16,5 +20,5 @@ target_include_directories(test_practice
         include
 )
 target_compile_definitions(test_practice
-    PRIVATE Werror
+    PRIVATE Werror Wall
 )
