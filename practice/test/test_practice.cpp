@@ -265,6 +265,32 @@ TEST_CASE("test left,right,parent","[function]"){
     }
 }
 
+
+TEST_CASE("test real_val & virtual_val","[function]"){
+    
+    SECTION( "real_val"){
+        int i = ez::real_val(5,6);
+        CHECK(i == 5);
+
+        int i2 = ez::real_val(7,6);
+        CHECK(i2 == 1);
+
+        int i3 = ez::real_val(-1,9);
+        CHECK(i3 == -1);
+    }
+
+    SECTION( "virtual_val"){
+        int i = ez::virtual_val(5,6,7);
+        CHECK(i == 47);
+
+        int i2 = ez::virtual_val(7,6,8);
+        CHECK(i2 == 55);
+
+        int i3 = ez::virtual_val(-1,6,9);
+        CHECK(i3 == 53);
+    }
+}
+
 TEST_CASE("test heap  ","[function]"){
 
 
@@ -292,6 +318,43 @@ TEST_CASE("test heap  ","[function]"){
 }
 
 
+
+TEST_CASE("test merge sort","[function]"){
+
+    SECTION( "merge : in palce"){
+        std::vector<int> test = {18,1,6,7,4,5,8,0};
+        ez::merge(test,std::pair<int,int>{1,3},std::pair<int,int>{4,6});
+        std::vector<int> rlt  = {18,1,4,5,6,7,8,0};
+        CHECK(test == rlt);
+
+        std::vector<int> test2 = {2,1};
+        ez::merge(test2,std::pair<int,int>{0,0},std::pair<int,int>{1,1});
+        std::vector<int> rlt2  = {1,2};
+        CHECK(test2 == rlt2);
+
+        std::vector<int> test3 = {18,1,6,8,2,3,4,0};
+        ez::merge(test3,std::pair<int,int>{1,3},std::pair<int,int>{4,6});
+        std::vector<int> rlt3  = {18,1,2,3,4,6,8,0};
+        CHECK(test3 == rlt3);
+    }
+
+    SECTION( "merge sort"){
+        std::vector<int> test = {6,1,2,9,3,7,4,5,8};
+        ez::merge_sort(test,0,test.size()-1);
+        std::vector<int> rlt  = {1,2,3,4,5,6,7,8,9};
+        CHECK(test == rlt);
+
+        std::vector<int> test2 = {6,-1,2,9,3,7,4,-5,8};
+        ez::merge_sort(test2,0,test2.size()-1);
+        std::vector<int> rlt2  = {-5,-1,2,3,4,6,7,8,9};
+        CHECK(test2 == rlt2);
+
+        std::vector<int> test3 = {-1,-2,-2,-3,-3,-7,-4,-5,-8};
+        ez::merge_sort(test3,0,test3.size()-1);
+        std::vector<int> rlt3  = {-8,-7,-5,-4,-3,-3,-2,-2,-1};
+        CHECK(test3 == rlt3);
+    }
+}
 
 
 
