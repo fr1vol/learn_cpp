@@ -37,6 +37,7 @@ public:
     ~red_black_tree(){delete root;}
 
     int size(const rb_node* node) const{
+        if(node == nullptr) return 0;
         int left_size = node->left == nullptr ? 0 : node->left->size;
         int right_size = node->right == nullptr ? 0 : node->right->size;
         return left_size + right_size + 1;

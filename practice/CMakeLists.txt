@@ -13,6 +13,7 @@ set(SOURCES
         test/test_practice.cpp
         test/test_heap.cpp
         test/test_trie.cpp
+        test/test_red_black_tree.cpp
         
 )
 
