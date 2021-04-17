@@ -9,10 +9,11 @@ set(SOURCES
         src/heap.cpp
         src/trie.cpp 
         src/main.cpp
+        src/red_black_tree.cpp
         test/test_practice.cpp
         test/test_heap.cpp
         test/test_trie.cpp
-
+        
 )
 
 add_executable(test_practice ${SOURCES})
