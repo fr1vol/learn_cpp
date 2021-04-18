@@ -37,28 +37,8 @@ public:
 
     red_black_tree():root(nullptr){}
     ~red_black_tree(){
-        std::queue<rb_node*> q;
-        if(root != nullptr){ 
-            q.push(root);
-        }
-
-        while(!q.empty()){
-            int size = q.size();
-            for(int i = 0 ; i< size ; ++i){
-                
-                auto n = q.front();
-                q.pop();
-
-                if(n->left != nullptr){
-                    q.push(n->left);
-                }
-
-                if(n->right != nullptr){
-                    q.push(n->right);
-                }
-
-                delete n;
-            }
+        while(root){
+            delete_min();
         }
     }
 
