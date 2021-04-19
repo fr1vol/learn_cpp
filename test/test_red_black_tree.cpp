@@ -3,14 +3,14 @@
 
 #if 1
 using namespace ez;
-TEST_CASE("test rb_node","[class]"){
+TEST_CASE("test rb_node_t","[class]"){
     
     SECTION("test init"){
         int key = 0;
         char val = '0'; 
-        rb_node<int,char> test(key,val);
+        rb_node_t<int,char> test(key,val);
         CHECK(test.size == 1);
-        CHECK(test.color == rb_node<int,char>::red);
+        CHECK(test.color == rb_node_t<int,char>::red);
         CHECK(test.k == key);
         CHECK(test.v == val);
         CHECK(test.left == nullptr);
@@ -43,6 +43,24 @@ TEST_CASE("test red_black_tree","[class]"){
         }
     }
 
+    
+    SECTION("delete min"){
+        red_black_tree<int,char> test;
+        test.put(0,'0');
+        test.put(1,'1');
+        test.put(2,'2');
+        test.put(3,'3');
+        auto tmp = test.min();
+        CHECK(tmp == 0);
+
+        test.delete_min();
+        tmp = test.min();
+        CHECK(tmp == 1);
+
+        test.delete_min();
+        tmp = test.min();
+        CHECK(tmp == 2);
+    }
     
 
     SECTION("delete"){

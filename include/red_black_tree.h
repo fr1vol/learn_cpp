@@ -9,7 +9,7 @@ namespace ez
 {
 
 template<typename Key,typename Value>
-struct rb_node 
+struct rb_node_t 
 {
     enum Color : int{
         red,
@@ -20,10 +20,10 @@ struct rb_node
     Value v;
     Color  color;
     int size;
-    rb_node* left;
-    rb_node* right;
+    rb_node_t* left;
+    rb_node_t* right;
 public:
-    rb_node(Key key,Value value) : k(key),v(value),color(red),size(1),left(nullptr),right(nullptr){};
+    rb_node_t(Key key,Value value) : k(key),v(value),color(red),size(1),left(nullptr),right(nullptr){};
     
 };
 
@@ -32,7 +32,7 @@ template<typename K,typename V>
 class red_black_tree
 {
 public:
-    using rb_node = rb_node<K,V>;
+    using rb_node = rb_node_t<K,V>;
 
 
     red_black_tree():root(nullptr){}
