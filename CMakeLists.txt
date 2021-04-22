@@ -10,10 +10,12 @@ set(SOURCES
         src/trie.cpp 
         src/main.cpp
         src/red_black_tree.cpp
+        src/unique_ptr.cpp
         test/test_practice.cpp
         test/test_heap.cpp
         test/test_trie.cpp
         test/test_red_black_tree.cpp
+        
         
 )
 
