@@ -4,22 +4,10 @@ project(practice)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SOURCES 
-        src/practice.cpp
-        src/heap.cpp
-        src/trie.cpp 
-        src/main.cpp
-        src/red_black_tree.cpp
-        src/unique_ptr.cpp
-        test/test_practice.cpp
-        test/test_heap.cpp
-        test/test_trie.cpp
-        test/test_red_black_tree.cpp
-        
-        
-)
+aux_source_directory(./src SOURCES)
+aux_source_directory(./test SOURCES_UT)
 
-add_executable(test_practice ${SOURCES})
+add_executable(test_practice ${SOURCES} ${SOURCES_UT})
 
 target_include_directories(test_practice 
     PRIVATE
