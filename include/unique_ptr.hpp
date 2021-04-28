@@ -11,7 +11,6 @@ namespace ez
     {
         void operator()(T* ptr) const {
             delete ptr;
-            ptr = nullptr;
         }
     };
 
@@ -30,7 +29,7 @@ namespace ez
         unique_ptr(std::nullptr_t ):m_ptr(std::make_tuple<T*,Delete>(nullptr,Delete{})){}
         unique_ptr(pointer p,Delete&& d = Delete{}): m_ptr(p,d){}
         unique_ptr(unique_ptr&& other){
-            swap(m_ptr,other.m_ptr);
+            swap(other.m_ptr);
             other.reset(nullptr);
         }
 
@@ -81,10 +80,20 @@ namespace ez
             std::get<0>(m_ptr) = nullptr;
             return old_ptr;
         }
+
+        void swap(unique_ptr& other)
+        {
+            using std::swap;
+            swap(m_ptr,other.m_ptr);
+        }
     private:
         std::tuple<T*,Delete> m_ptr;
     };
 
+    template<typename T>
+    void swap(unique_ptr<T>& a,unique_ptr<T>& b){
+        a.swap(b);
+    }
 
 };//namespace ez
 
