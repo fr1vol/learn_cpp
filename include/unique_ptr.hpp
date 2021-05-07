@@ -9,6 +9,7 @@ namespace ez
     template<typename T>
     struct default_delete
     {
+        constexpr default_delete() = default;
         void operator()(T* ptr) const {
             delete ptr;
         }
@@ -26,16 +27,14 @@ namespace ez
         unique_ptr& operator=(const unique_ptr&) = delete;
 
         unique_ptr():unique_ptr(nullptr){}
-        unique_ptr(std::nullptr_t ):m_ptr(std::make_tuple<T*,Delete>(nullptr,Delete{})){}
-        unique_ptr(pointer p,Delete&& d = Delete{}): m_ptr(p,d){}
-        unique_ptr(unique_ptr&& other){
-            swap(other.m_ptr);
-            other.reset(nullptr);
-        }
+        unique_ptr(std::nullptr_t ):m_ptr(nullptr,Delete{}){}
+        unique_ptr(pointer p,Delete&& d = Delete{}): m_ptr(p,std::move(d)){}
+        unique_ptr(unique_ptr&& other):m_ptr(other.release(),std::forward<delete_type>(other.get_deleter())){}
 
         unique_ptr& operator=( unique_ptr&& r ) {
             reset(r.release());
-            get_deleter() = r.get_deleter();
+            get_deleter() = std::forward<delete_type>(r.get_deleter());
+            return *this;
         }
 
         unique_ptr& operator=( std::nullptr_t) {
@@ -67,6 +66,10 @@ namespace ez
             return std::get<1>(m_ptr);
         }
 
+        const Delete& get_deleter() const {
+            return std::get<1>(m_ptr);
+        }
+
         void reset(pointer p = nullptr){
             pointer old_ptr = get();
             std::get<0>(m_ptr) = p;
@@ -91,7 +94,7 @@ namespace ez
     };
 
     template<typename T>
-    void swap(unique_ptr<T>& a,unique_ptr<T>& b){
+    inline void swap(unique_ptr<T>& a,unique_ptr<T>& b){
         a.swap(b);
     }
 

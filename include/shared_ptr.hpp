@@ -9,6 +9,7 @@ namespace ez
     template<typename T>
     struct default_delete
     {
+        constexpr default_delete() = default;
         void operator()(T* ptr) const {
             delete ptr;
         }
@@ -208,6 +209,5 @@ namespace ez
         friend class shared_ptr;
        
     };
-
 
 };//namespace ez
