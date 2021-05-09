@@ -2,34 +2,64 @@
 #include <practice.h>
 #include <limits.h>
 #include <cstring>
+#include <iostream>
+using namespace std;
+
 TEST_CASE("test quick_sort function ","[function]"){
     std::vector<int> v = {4,6,2,7,1,9,8,3,5,0};
+    //has duplicate values
+    std::vector<int> v2 = {4,4,4,3,6,2,7,1,9,8,3,5,0};
+    
 
-    SECTION( "test all ranges " ) {
+    SECTION("test quick_helper"){
+        auto index = ez::quick_helper(v,0,v.size()-1);
+        CHECK(index == 4);
+    }
+
+    
+    SECTION( "test quick_sort2" ) {
+        int start = 0;
+        int end = v.size()-1;
+        ez::quick_sort2(v,start,end);
+        std::vector<int> test = {0,1,2,3,4,5,6,7,8,9};
+        CHECK(v == test);
+
+        start = 0;
+        end = v2.size()-1;
+        ez::quick_sort2(v2,start,end);
+        std::vector<int> test2 = {0,1,2,3,3,4,4,4,5,6,7,8,9};
+        CHECK(v2 == test2);
+
+    }
+
+
+    SECTION( "test quick_sort1 " ) {
         
         int start = 0;
         int end = v.size()-1;
-        ez::quick_sort(v,start,end);
+        ez::quick_sort1(v,start,end);
         std::vector<int> test = {0,1,2,3,4,5,6,7,8,9};
         CHECK(v == test);
-    }
-    SECTION( "test the local ranges " ) {
-        
-        int start = 0;
-        int end = 3;
-        ez::quick_sort(v,start,end);
-        std::vector<int> test = {2,4,6,7,1,9,8,3,5,0};
-        CHECK(v == test);
 
+        start = 0;
+        end = v2.size()-1;
+        ez::quick_sort1(v2,start,end);
+        std::vector<int> test2 = {0,1,2,3,3,4,4,4,5,6,7,8,9};
+        CHECK(v2 == test2);
     }
 
     SECTION("test start >= end"){
         int start = 2;
         int end = 0;
-        ez::quick_sort(v,start,end);
+        ez::quick_sort1(v,start,end);
         std::vector<int> test = {4,6,2,7,1,9,8,3,5,0};
         CHECK(v == test);
-        ez::quick_sort(v,start,start);
+        ez::quick_sort1(v,start,start);
+        CHECK(v == test);
+
+        ez::quick_sort2(v,start,end);
+        CHECK(v == test);
+        ez::quick_sort2(v,start,start);
         CHECK(v == test);
     }
     

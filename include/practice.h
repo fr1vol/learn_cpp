@@ -12,7 +12,10 @@ namespace ez{
     int real_val(int cur_val,int max_val);
     int virtual_val(int sort_val,int cur_val,int max_val);
     //-------------------------- sort --------------------------
-    void quick_sort(std::vector<int>& v,int start, int end);
+    int  quick_helper(std::vector<int>& v,int start, int end);
+    void quick_sort1(std::vector<int>& v,int start, int end);
+    void quick_sort2(std::vector<int>& v,int start, int end);
+
     void merge_sort(std::vector<int>& v,int start, int end);
     void merge(std::vector<int>& v,std::pair<int,int> ,std::pair<int,int>);
     //-------------------------- heap --------------------------

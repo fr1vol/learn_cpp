@@ -9,33 +9,57 @@
 namespace ez
 {
     
-    void quick_sort(std::vector<int>& v, int start, int end){
-        assert(start >= 0 && static_cast<int>(v.size()) > end);
-        
-        if(start >= end){
-            return ;
-        }
-        int left = start;
-        int right = end;
+    int quick_helper(std::vector<int>& v,int left, int right)
+    {
+        assert(left >= 0 && right < v.size() && left < right);
         int key = v[left];
-
-        while(left < right){
-            while(left < right && v[right] > key){
+        
+        while( left < right){
+            while(left < right && v[right] >= key){
                 --right;
             }
-            v[left] = v[right];
+            v[left] =  v[right];
 
-            while(left < right && v[left] < key){
+            while(left < right && v[left] <= key){
                 ++left;
-            }
-            v[right] = v[left]; 
+            } 
+            v[right] = v[left];
         }
         v[left] = key;
-
-        quick_sort(v,start, left-1);
-        quick_sort(v,left+1,end);
-        
+        return left;
     }
+
+
+    void quick_sort1(std::vector<int>& v,int start, int end){
+        if (start<end){
+            auto index = quick_helper(v, start, end);
+            quick_sort1(v,start,index-1);
+            quick_sort1(v,index+1,end);
+        }
+    }
+    
+    void quick_sort2(std::vector<int>& v,int start, int end){
+        
+        std::stack<std::pair<int,int>> s;
+        if (start<end) {
+            s.push({start,end});
+        }
+        while(!s.empty()){
+            auto [left,right] = s.top();
+            s.pop();
+            auto index = quick_helper(v,left,right);
+            if(index-1 > left){
+                s.push({left,index-1});
+            }
+
+            if(index+1 < right){
+                s.push({index+1,right});
+            }
+        }
+    }
+
+
+
 
     //--------------------- merge --------------------
     int real_val(int cur_val,int max_val) {
