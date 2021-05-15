@@ -83,7 +83,7 @@ namespace ez{
             it = first;
             step = count/2;
             std::advance(it,step);
-            if(*it <= key) {
+            if(!(key < *it)) {
                 first = ++it; 
                 count -= step + 1; 
                 }

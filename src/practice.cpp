@@ -354,7 +354,7 @@ namespace ez
         int r = right(index);
 
         int largest = index;
-        if(l < v.size() && v[l] > v[index]){
+        if(l < v.size() && v[l] > v[largest]){
             largest = l;
         }
 
