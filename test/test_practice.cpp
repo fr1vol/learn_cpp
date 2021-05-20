@@ -150,19 +150,28 @@ TEST_CASE("test strstr"){
 
 TEST_CASE("test lower_bound","[function]"){
 
-    std::vector<int> test = {1,2,3,4,5,6,7,7,8,9,10,11,12,13};
+    std::vector<int> test = {1,2,3,4,6,7,7,8,9,10,11,12,13};
     
     SECTION( "has key"){
         auto it = ez::lower_bound(test.begin(),test.end(),7);
         CHECK(it != test.end());
         CHECK(*it == 7);
-        CHECK(it-test.begin()+1 == 7);
+        CHECK(it-test.begin()+1 == 6);
     }
 
-    SECTION( "has not key"){
+    SECTION( "has not key, key > max"){
         auto it = ez::lower_bound(test.begin(),test.end(),16);
         CHECK(it == test.end());
     }
+    SECTION( "has not key, min < key < max"){
+        auto it = ez::lower_bound(test.begin(),test.end(),5);
+        CHECK(*it == 6);
+    }
+    SECTION( "has not key, key < min"){
+        auto it = ez::lower_bound(test.begin(),test.end(),0);
+        CHECK(*it == 1);
+    }
+
 }
 
 TEST_CASE("test upper_bound","[function]"){
@@ -349,25 +358,45 @@ TEST_CASE("test heap  ","[function]"){
 
 
 
+
 TEST_CASE("test merge sort","[function]"){
 
-    SECTION( "merge : in palce"){
+    SECTION( "merge1 : use tmp"){
         std::vector<int> test = {18,1,6,7,4,5,8,0};
-        ez::merge(test,std::pair<int,int>{1,3},std::pair<int,int>{4,6});
+        auto tmp = test;
+        ez::merge(test,std::pair<int,int>{1,3},std::pair<int,int>{4,6},tmp);
         std::vector<int> rlt  = {18,1,4,5,6,7,8,0};
         CHECK(test == rlt);
 
         std::vector<int> test2 = {2,1};
-        ez::merge(test2,std::pair<int,int>{0,0},std::pair<int,int>{1,1});
+        ez::merge(test2,std::pair<int,int>{0,0},std::pair<int,int>{1,1},tmp);
         std::vector<int> rlt2  = {1,2};
         CHECK(test2 == rlt2);
 
         std::vector<int> test3 = {18,1,6,8,2,3,4,0};
-        ez::merge(test3,std::pair<int,int>{1,3},std::pair<int,int>{4,6});
+        ez::merge(test3,std::pair<int,int>{1,3},std::pair<int,int>{4,6},tmp);
         std::vector<int> rlt3  = {18,1,2,3,4,6,8,0};
         CHECK(test3 == rlt3);
+
     }
 
+    SECTION( "merge2 : in palce"){
+        std::vector<int> test = {18,1,6,7,4,5,8,0};
+        ez::merge2(test,std::pair<int,int>{1,3},std::pair<int,int>{4,6});
+        std::vector<int> rlt  = {18,1,4,5,6,7,8,0};
+        CHECK(test == rlt);
+
+        std::vector<int> test2 = {2,1};
+        ez::merge2(test2,std::pair<int,int>{0,0},std::pair<int,int>{1,1});
+        std::vector<int> rlt2  = {1,2};
+        CHECK(test2 == rlt2);
+
+        std::vector<int> test3 = {18,1,6,8,2,3,4,0};
+        ez::merge2(test3,std::pair<int,int>{1,3},std::pair<int,int>{4,6});
+        std::vector<int> rlt3  = {18,1,2,3,4,6,8,0};
+        CHECK(test3 == rlt3);
+
+    }
     SECTION( "merge sort"){
         std::vector<int> test = {6,1,2,9,3,7,4,5,8};
         ez::merge_sort(test,0,test.size()-1);

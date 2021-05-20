@@ -70,70 +70,80 @@ namespace ez
         return  sort_val + cur_val * max_val;
     }
 
-    void merge(std::vector<int>& v,std::pair<int,int> range_left,std::pair<int,int> range_right){
-
-
+    void merge2(std::vector<int>& v,std::pair<int,int> range_left,std::pair<int,int> range_right){
+       
         int i = range_left.first;
         int j = range_right.first;
+        assert(v[i] >= 0 && v[j] >= 0);
         int pos = i;
-
-        if(v[i] >= 0  && v[j] >= 0){
-            
-            int max_num = std::max(v[range_left.second],v[range_right.second]) + 1;
-            while(i< range_left.second+1 && j < range_right.second+1){
-                int real_i = real_val(v[i],max_num);
-                int real_j = real_val(v[j],max_num);
-                int real_pos = real_val(v[pos],max_num);
-                if(real_i > real_j){
-                    v[pos] = virtual_val(real_j,real_pos,max_num);
-                    ++j;
-                }else{
-                    v[pos] = virtual_val(real_i,real_pos,max_num);
-                    ++i;
-                }
-                ++pos;
+        int max_num = std::max(v[range_left.second],v[range_right.second]) + 1;
+        while(i< range_left.second+1 && j < range_right.second+1){
+            int real_i = real_val(v[i],max_num);
+            int real_j = real_val(v[j],max_num);
+            int real_pos = real_val(v[pos],max_num);
+            if(real_i > real_j){
+                v[pos] = virtual_val(real_j,real_pos,max_num);
+                ++j;
+            }else{
+                v[pos] = virtual_val(real_i,real_pos,max_num);
+                ++i;
             }
+            ++pos;
+        }
+        for(;i < range_left.second+1;++i){
+            v[pos] = real_val(v[i],max_num);
+            ++pos;
+        }
+        
+        for(int  i = range_left.first; i < range_right.second + 1; ++i){
+            v[i] = (v[i]%max_num);
+        }
 
-            for(;i < range_left.second+1;++i){
-                v[pos] = real_val(v[i],max_num);
-                ++pos;
+    }
+    void merge(std::vector<int>& v,std::pair<int,int> l,std::pair<int,int> r, std::vector<int>& tmp){
+        
+        int l1 = l.first;
+        int r1 = l.second;
+        int l2 = r.first;
+        int r2 = r.second;
+        int pos = l1;
+        while(l1 <= r1 && l2 <= r2){
+            if( v[l1]  <= v[l2]){
+                tmp[pos] = v[l1];
+                ++l1;
+            }else{
+                tmp[pos] = v[l2];
+                ++l2;
             }
-            
+            ++pos;
+        }
+        for(;l1 <= r1;++l1){
+            tmp[pos] = v[l1];
+            ++pos;
+        }
+        for(;l2 <= r2;++l2){
+            tmp[pos] = v[l2];
+            ++pos;
+        }
+        for(;l.first <= r.second; ++l.first){
+            v[l.first] = tmp[l.first];
+        }
+    
+       
+    }
 
-
-            for(int  i = range_left.first; i < range_right.second + 1; ++i){
-                v[i] = (v[i]%max_num);
-            }
-        }else{
-            std::vector<int> v1(v.begin()+range_left.first,v.begin()+range_left.second+1);
-            std::vector<int> v2(v.begin()+range_right.first,v.begin()+range_right.second+1);
-
-            int i = 0;
-            int j = 0;
-            while(i != v1.size() && j != v2.size()){
-                if(v1[i] > v2[j]){
-                    v[pos] = v2[j];
-                    ++j;
-                }else{
-                    v[pos] = v1[i];
-                    ++i;
-                }
-                ++pos;
-            }
-            for(;i != v1.size();++i){
-                v[pos] = v1[i];
-                ++pos;
-            }
+    void merge_helper(std::vector<int>& v,int start, int end,std::vector<int>& tmp){
+        if(start < end){
+            int mid = start + (end-start)/2;
+            merge_helper(v,start,mid,tmp);
+            merge_helper(v,mid+1,end,tmp);
+            merge(v,{start,mid},{mid+1,end},tmp);
         }
     }
 
     void merge_sort(std::vector<int>& v,int start, int end){
-        if(start < end){
-            int mid = start + (end-start)/2;
-            merge_sort(v,start,mid);
-            merge_sort(v,mid+1,end);
-            merge(v,{start,mid},{mid+1,end});
-        }
+        std::vector<int> tmp(v.size());
+        merge_helper(v, start, end, tmp);
     }
 
     std::size_t strlen(const char * str){
