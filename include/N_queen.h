@@ -50,14 +50,10 @@ class N_queen {
         auto vec = select(v,col);
         for(auto row : vec){
             
-            
             v[row][col] = 7;
             tmp.push_back(row);
-            
             filled_col(v,col+1);
-            
             helper(v,tmp,col+1);
-            
             clear_col(v,col+1);
             v[row][col] = 0;
             tmp.pop_back();

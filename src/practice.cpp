@@ -192,7 +192,7 @@ namespace ez
         for(int i =0,j=1; j < str.length();){
             
             if(str[i] == str[j]){
-                ans[j] = ans[i] + 1;
+                ans[j] = i + 1;
                 ++i;
                 ++j;
             }else{
