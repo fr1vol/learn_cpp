@@ -44,5 +44,6 @@ TEST_CASE("test ez::string ","[class]"){
         CHECK(a1.size() == 0);
         CHECK(a1.is_local());
         CHECK(a1.empty());
+
     }
 }

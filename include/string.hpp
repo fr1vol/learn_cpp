@@ -62,6 +62,8 @@ namespace ez
 
         string(const char* str):string(str,str == nullptr?0:strlen(str)){}
         string(const string& other){
+            
+            assert(this != std::addressof(other));
             if(other.size() <= buffer_size){
                 set_local(other.size());
             }else{
@@ -71,6 +73,8 @@ namespace ez
             strncpy(m_start,other.m_start,other.size());
         }
         string(string&& other){
+            
+            assert(this != std::addressof(other));
             if(other.is_local()){
                 set_local(other.size());
                 strncpy(m_start,other.m_start,other.size());
@@ -81,6 +85,7 @@ namespace ez
         }
 
         string& operator=(const string& other){
+            assert(this != std::addressof(other));
             if (other.size() > capacity()){
                 if(!is_local()){
                     delete[] m_start;
@@ -93,6 +98,7 @@ namespace ez
         }
 
         string& operator=(string&& other){
+            assert(this != std::addressof(other));
             if(other.is_local()){
                 strncpy(m_start,other.m_start,other.size());
             }else{
