@@ -2,7 +2,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <daemon.h>
-
+#include <signal.h>
 namespace ez{
 
 int becomeDaemon(int flags)
@@ -54,6 +54,7 @@ int becomeDaemon(int flags)
     
     }
 
+    signal(SIGCHLD,SIG_IGN);
     return 0;
 
 

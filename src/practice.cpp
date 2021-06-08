@@ -12,6 +12,11 @@ namespace ez
     int quick_helper(std::vector<int>& v,int left, int right)
     {
         assert(left >= 0 && right < v.size() && left < right);
+
+        // int count = right - left  + 1;
+        // int rand_index = left + rand()%count ;
+        // std::swap(v[left],v[rand_index]);
+
         int key = v[left];
         
         while( left < right){
