@@ -131,3 +131,46 @@ TEST_CASE("shared_ptr","[class]"){
         CHECK(*a == 4);
     }
 }
+
+
+TEST_CASE("weak_ptr","[class]"){
+
+    SECTION("init"){
+        weak_ptr<int> test;
+        CHECK(test.expired());
+        CHECK(test.weak_count() == 0);
+        CHECK(test.owner_count() == 0);
+            
+        {
+            shared_ptr<int> a ( new int(2));
+            weak_ptr<int> b(a);
+            CHECK(!b.expired());
+            CHECK(b.owner_count() == 1);
+            CHECK(b.weak_count() == 2);
+
+            weak_ptr<int> c(a);
+            CHECK(!c.expired());
+            CHECK(b.owner_count() == 1);
+            CHECK(b.weak_count() == 3);
+            CHECK(c.weak_count() == 3);
+            
+            test = b;
+            CHECK(!test.expired());
+            CHECK(b.weak_count() == 4);
+            CHECK(c.weak_count() == 4);
+            CHECK(test.weak_count() == 4);
+        } 
+        CHECK(test.expired());
+        CHECK(test.weak_count() == 1);
+        CHECK(test.owner_count() == 0);
+    }
+
+    SECTION("function : lock"){
+        shared_ptr<int> a ( new int(2));
+        weak_ptr<int> b(a);
+        auto c = b.lock();
+        CHECK(*c == 2);
+        CHECK(b.owner_count() == 2);
+    }
+    
+}

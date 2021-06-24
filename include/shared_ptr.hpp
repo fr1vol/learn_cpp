@@ -17,6 +17,7 @@ namespace ez
 
     struct control_block
     {
+        constexpr control_block() = default;
         virtual void increase_weak() = 0;
         virtual void decrease_weak() = 0;
         virtual void increase_owner() = 0;
@@ -25,7 +26,7 @@ namespace ez
         virtual void destroy_this() = 0;
         virtual int weak_count() = 0;
         virtual int owner_count() = 0;
-        virtual ~control_block(){}
+        virtual ~control_block() = default;
     };
 
     template<typename T,typename Delete = default_delete<T>>
@@ -35,7 +36,7 @@ namespace ez
         
         explicit control_block_impl():ptr(nullptr,Delete()),weak(1),owner(1){}
         explicit control_block_impl(std::nullptr_t ):control_block_impl(){}        
-        control_block_impl(T* p, Delete&& d =Delete{}):ptr(p,d),weak(1),owner(1){}
+        control_block_impl(T* p, Delete&& d = Delete{}):ptr(p,d),weak(1),owner(1){}
 
         void increase_weak(){
             ++weak;
@@ -75,7 +76,7 @@ namespace ez
         pointer get() const {
             return std::get<0>(ptr);
         }
-        Delete get_del(){
+        Delete& get_del(){
             return std::get<1>(ptr);
         }
         int weak_count(){
@@ -92,18 +93,20 @@ namespace ez
 
     };
 
-
+    template<typename T>
+    class weak_ptr;
+    
     template<typename T>
     class shared_ptr
     {
     public:
         using pointer = T*;
         //construct 
-        shared_ptr():c_ptr(nullptr),m_ptr(nullptr){}
-        explicit shared_ptr(std::nullptr_t):shared_ptr(){}
+        constexpr shared_ptr():c_ptr(nullptr),m_ptr(nullptr){}
+        constexpr shared_ptr(std::nullptr_t):shared_ptr(){}
     
-        template<typename T2,typename D = default_delete<T2>>
-        explicit shared_ptr(T2* ptr,D d = D{}):c_ptr(new control_block_impl<T2>(ptr)),m_ptr(static_cast<pointer>(ptr)){}
+        template<typename T2,typename Delete = default_delete<T2>>
+        explicit shared_ptr(T2* ptr,Delete&& d = Delete{}):c_ptr(new control_block_impl<T2,Delete>(ptr,std::forward<decltype(d)>(d))),m_ptr(static_cast<pointer>(ptr)){}
 
         shared_ptr(const shared_ptr& other){
             this->copy_construct(other);
@@ -135,6 +138,13 @@ namespace ez
         template<typename T2>
         shared_ptr(shared_ptr<T2>&& other){
             this->move_construct(std::move(other));
+        }
+
+        shared_ptr(const weak_ptr<T>& other){
+            
+            m_ptr = other.m_ptr;
+            c_ptr = other.c_ptr;
+            increase_owner();
         }
 
         T& operator*() const{
@@ -207,7 +217,127 @@ namespace ez
 
         template<typename T2>
         friend class shared_ptr;
-       
+
+        template<typename T2>
+        friend class weak_ptr;   
+    };
+
+    template<typename T>
+    class weak_ptr
+    {
+    public:
+        using element_type = T;
+        constexpr weak_ptr():c_ptr(nullptr),m_ptr(nullptr){}
+        void inc_weak_count() const {
+            if(c_ptr){
+                c_ptr->increase_weak();
+            }
+        }
+
+        int weak_count() const {
+            if(c_ptr){
+                return c_ptr->weak_count(); 
+            }
+            return 0;
+        }
+
+        int owner_count() const {
+            if(c_ptr){
+                return c_ptr->owner_count(); 
+            }
+            return 0;
+        }
+
+        template<typename T2>
+        void copy_construct(const weak_ptr<T2>& other){
+            other.inc_weak_count();
+            m_ptr = other.m_ptr;
+            c_ptr = other.c_ptr;
+        }
+
+        template<typename T2>
+        void move_construct(weak_ptr&& other){
+            m_ptr = other.m_ptr;
+            c_ptr = other.c_ptr;
+            other.reset();
+        }
+
+        weak_ptr(const weak_ptr& other){
+            this->copy_construct(other);
+        }
+
+        template<typename T2>
+        weak_ptr(const weak_ptr<T2>& other){
+            this->copy_construct(other);
+        }
+
+        weak_ptr(weak_ptr&& other){
+            this->move_construct(std::move(other));
+        }
+
+        template<typename T2>
+        weak_ptr(weak_ptr<T2>&& other){
+            this->move_construct(std::move(other));
+        }
+
+        template<typename T2>
+        weak_ptr(const shared_ptr<T2>& other){
+            if(other.c_ptr){
+                other.c_ptr->increase_weak();
+            }
+            m_ptr = other.m_ptr;
+            c_ptr = other.c_ptr;
+        }
+
+
+        weak_ptr& operator=(const weak_ptr& other){
+            weak_ptr(other).swap(*this);
+            return *this;
+        }
+
+        weak_ptr& operator=(weak_ptr&& other){
+            weak_ptr(std::move(other)).swap(*this);
+            return *this;
+        }
+
+        template<typename T2>
+        weak_ptr& operator=(const shared_ptr<T2>& other){
+            weak_ptr(other).swap(*this);
+            return *this;
+        }
+
+
+        ~weak_ptr() {
+            reset();
+        }
+
+        void reset(){
+            if(c_ptr){
+                c_ptr->decrease_weak();
+            }
+            c_ptr = nullptr;
+            m_ptr = nullptr;
+        }
+
+        void swap( weak_ptr& other){
+            using std::swap;
+            swap(c_ptr,other.c_ptr);
+            swap(m_ptr,other.m_ptr);
+        }
+
+        bool expired() const{
+            if(c_ptr){
+                return c_ptr->owner_count() == 0;
+            }
+            return true;
+        }
+
+        shared_ptr<T> lock() const{
+           return  expired() ? shared_ptr<T>() : shared_ptr<T>(*this);
+        }
+
+        control_block* c_ptr;
+        element_type* m_ptr;
     };
 
 };//namespace ez
