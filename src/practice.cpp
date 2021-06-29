@@ -23,14 +23,15 @@ namespace ez
             while(left < right && v[right] >= key){
                 --right;
             }
-            v[left] =  v[right];
-
+            //v[left] =  v[right];
+            std::swap(v[left],v[right]);
             while(left < right && v[left] <= key){
                 ++left;
             } 
-            v[right] = v[left];
+            //v[right] = v[left];
+            std::swap(v[left],v[right]);
         }
-        v[left] = key;
+        //v[left] = key;
         return left;
     }
 

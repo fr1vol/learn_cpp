@@ -9,11 +9,14 @@ TEST_CASE("test quick_sort function ","[function]"){
     std::vector<int> v = {4,6,2,7,1,9,8,3,5,0};
     //has duplicate values
     std::vector<int> v2 = {4,4,4,3,6,2,7,1,9,8,3,5,0};
-    
+                            
 
     SECTION("test quick_helper"){
         auto index = ez::quick_helper(v,0,v.size()-1);
         CHECK(index == 4);
+
+        auto idx2 = ez::quick_helper(v2,0,v2.size()-1);
+        CHECK(idx2 == 7);
     }
 
     
